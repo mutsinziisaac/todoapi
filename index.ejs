@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>todo app</title>
+    <link rel="stylesheet" href="/public/style.css" />
+  </head>
+  <body>
+    <div
+      class="container"
+      style="height: 600px; display: grid; justify-content: center"
+    >
+      <div
+        class="content"
+        style="
+          border: 1px solid black;
+          border-radius: 10px;
+          width: 400px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        "
+      >
+        <% if (user) {%>
+        <h2>WELCOME BACK: <b><%= user.username %></b></h2>
+        <form action="/save" method="POST">
+          <label for="todo">Todo</label>
+          <input type="text" id="todo" name="todo" />
+          <button type="submit">save</button>
+        </form>
+        <h3><u>Todos(<%= allTodos.length %>)</u></h3>
+        <% if (allTodos && allTodos.length > 0) { %>
+        <ol>
+          <% allTodos.forEach(todo => { %>
+          <li
+            style="
+              margin: 10px;
+              background-color: rgb(208, 205, 205);
+              width: 90px;
+              border-radius: 5px;
+            "
+          >
+            <%= todo.todo %>
+          </li>
+          <% }); %>
+        </ol>
+        <% } else { %>
+        <p>No todos found.</p>
+        <% } %>
+      </div>
+      <a href="/log-out">LOG OUT</a>
+
+      <% } else { %>
+      <div style="display: grid">
+        <h1>please log in!</h1>
+        <form action="/log-in" method="POST" style="display: grid; gap: 15px">
+          <label for="username">Username:</label>
+          <input name="username" placeholder="username" type="text" />
+          <label for="password">Password:</label>
+          <input name="password" type="password" placeholder="password" />
+          <button>Log In</button>
+        </form>
+        <%}%>
+      </div>
+    </div>
+  </body>
+</html>
