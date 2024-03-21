@@ -107,7 +107,7 @@ app.post(
     failureRedirect: "/",
   })
 );
-/*app.post("/api/log-in", (req: Request, res: Response, next: NextFunction) => {
+app.post("/api/log-in", (req: Request, res: Response, next: NextFunction) => {
   passport.authenticate("local", (err: any, user: any) => {
     if (err) {
       return next(err);
@@ -125,7 +125,7 @@ app.post(
       res.status(200).json({ message: "Authentication successful", user });
     });
   })(req, res, next);
-});*/
+});
 
 app.get("/log-out", (req: Request, res: Response, next: NextFunction) => {
   req.logout((err) => {
@@ -207,3 +207,5 @@ app.post(
     }
   }
 );
+
+export default app;
