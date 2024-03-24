@@ -1,6 +1,8 @@
 import express, { Request, Response, NextFunction } from "express";
 import session from "express-session";
 import passport from "passport";
+import swaggerUi from "swagger-ui-express";
+import swaggerDocument from "./api-documentation.json";
 import { Strategy as LocalStrategy } from "passport-local";
 import mongoose, { Schema, Document } from "mongoose";
 import bcryptjs from "bcryptjs";
@@ -30,6 +32,7 @@ const app = express();
 app.set("views", __dirname);
 app.set("view engine", "ejs");
 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
 app.use(passport.session());
 app.use(express.json());
@@ -107,6 +110,7 @@ app.post(
     failureRedirect: "/",
   })
 );
+
 app.post("/api/log-in", (req: Request, res: Response, next: NextFunction) => {
   passport.authenticate("local", (err: any, user: any) => {
     if (err) {
@@ -147,6 +151,8 @@ app.post("/save", async (req: Request, res: Response, next: NextFunction) => {
     return next(err);
   }
 });
+
+// api Endpoints
 
 app.get("/api/todos", async (req: Request, res: Response) => {
   const allTodos = await Todo.find().exec();
@@ -207,5 +213,25 @@ app.post(
     }
   }
 );
+
+app.post("/api/log-in", (req: Request, res: Response, next: NextFunction) => {
+  passport.authenticate("local", (err: any, user: any) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      // Authentication failed
+      return res.status(401).json({ message: "Authentication failed" });
+    }
+    // Authentication succeeded
+    req.login(user, (err) => {
+      if (err) {
+        return next(err);
+      }
+      // Redirect the user or send a success response
+      res.status(200).json({ message: "Authentication successful", user });
+    });
+  })(req, res, next);
+});
 
 export default app;
